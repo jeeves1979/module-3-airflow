@@ -1,3 +1,4 @@
+# проверка связи 
 from datetime import timedelta, datetime
 
 from airflow import DAG
@@ -22,8 +23,12 @@ dag = DAG(
     schedule_interval=timedelta(seconds=60),
 )
 
+latest_only = LatestOnlyOperator(task_id='latest_only', dag=dag)
+
 git_pull = BashOperator(
     task_id='git_pull',
     bash_command='git -C /root/airflow/dags/ pull',
     dag=dag,
 )
+
+latest_only >> git_pull
